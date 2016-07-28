@@ -4,4 +4,5 @@ buildmeup is a repository of often used but hard to remember snippets. Feel free
 
 ## Index
 ##### FPM Python
-Create a python RPM using fpm on CentOS6
+CentOS 6.x by default has Python 2.6.6. If you need the latest Python, but cant find an RPM, use this to create a python RPM. 
+Requires : fpm, "development tools" group
