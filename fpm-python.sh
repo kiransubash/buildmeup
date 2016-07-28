@@ -20,8 +20,7 @@ yum -y install \
   db4-devel \
   expat-devel
 
-./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-ipv6
-make -j2
+./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-ipv6 && make
 
 make install DESTDIR=${TMP_INSTALL_DIR}
 
