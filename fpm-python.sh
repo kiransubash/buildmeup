@@ -5,6 +5,7 @@ DOWNLOAD_DIR=/tmp/fpm-python
 TMP_INSTALL_DIR=/tmp/fpm-python-installdir
 LATEST_PYTHON=https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
 VERSION="2.7.12"
+ORIGPATH=${PWD}
 
 mkdir ${DOWNLOAD_DIR} ; mkdir ${TMP_INSTALL_DIR}
 cd ${DOWNLOAD_DIR}
@@ -42,6 +43,7 @@ cat << EOF > ${TMP_INSTALL_DIR}/post-uninstall.sh
 /bin/rm /usr/bin/python2.7
 EOF
 
+cd ${ORIGPATH}
 fpm -s dir -t rpm -n python27 -v ${VERSION} -C ${TMP_INSTALL_DIR} \
   --after-install ${TMP_INSTALL_DIR}/post-install.sh \
   --after-remove ${TMP_INSTALL_DIR}/post-uninstall.sh \
@@ -56,5 +58,5 @@ fpm -s dir -t rpm -n python27 -v ${VERSION} -C ${TMP_INSTALL_DIR} \
   --directories=/usr/local/lib/python2.7/ \
   --directories=/usr/local/include/python2.7/ \
   usr/local
-
+  
 /bin/rm -fr ${TMP_INSTALL_DIR} ${DOWNLOAD_DIR}
