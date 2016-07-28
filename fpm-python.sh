@@ -56,3 +56,5 @@ fpm -s dir -t rpm -n python27 -v ${VERSION} -C ${TMP_INSTALL_DIR} \
   --directories=/usr/local/lib/python2.7/ \
   --directories=/usr/local/include/python2.7/ \
   usr/local
+
+/bin/rm -fr ${TMP_INSTALL_DIR} ${DOWNLOAD_DIR}
