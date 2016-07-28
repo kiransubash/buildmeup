@@ -4,6 +4,7 @@
 DOWNLOAD_DIR=/tmp/fpm-python
 TMP_INSTALL_DIR=/tmp/fpm-python-installdir
 LATEST_PYTHON=https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
+VERSION="2.7.12"
 
 mkdir ${DOWNLOAD_DIR} ; mkdir ${TMP_INSTALL_DIR}
 cd ${DOWNLOAD_DIR}
@@ -29,17 +30,19 @@ yum -y install \
 
 make install DESTDIR=${TMP_INSTALL_DIR}
 
-# Add /usr/local/lib to ldconfig path if not exists - not required for static linked build
+# Add /usr/local/lib to ldconfig path if not exists - not required for static linked build ; create symlink to binary
 cat << EOF > ${TMP_INSTALL_DIR}/post-install.sh
 echo "/usr/local/lib" > /etc/ld.so.conf.d/python2.7.conf && /sbin/ldconfig
+ln -s /usr/local/bin/python2.7 /usr/bin/python2.7
 EOF
 
-# Remove our addition of ldconfig library path
+# Remove our addition of ldconfig library path, and symlink
 cat << EOF > ${TMP_INSTALL_DIR}/post-uninstall.sh
 /bin/rm /etc/ld.so.conf.d/python2.7.conf && /sbin/ldconfig
+/bin/rm /usr/bin/python2.7
 EOF
 
-fpm -s dir -t rpm -n python27 -v 2.7.6 -C ${TMP_INSTALL_DIR} \
+fpm -s dir -t rpm -n python27 -v ${VERSION} -C ${TMP_INSTALL_DIR} \
   --after-install ${TMP_INSTALL_DIR}/post-install.sh \
   --after-remove ${TMP_INSTALL_DIR}/post-uninstall.sh \
   -d 'openssl' \
