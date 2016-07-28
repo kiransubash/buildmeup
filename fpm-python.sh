@@ -1,4 +1,4 @@
-# Create CentOS 6 RPM package of Python 2.7.6.
+# Create CentOS 6 RPM package of Python 2.7.12
 # Requires: fpm
 
 DOWNLOAD_DIR=/tmp/fpm-python
@@ -29,7 +29,15 @@ yum -y install \
 
 make install DESTDIR=${TMP_INSTALL_DIR}
 
-echo '/sbin/ldconfig' > ${TMP_INSTALL_DIR}/run-ldconfig.sh
+# Add /usr/local/lib to ldconfig path if not exists - not required for static linked build
+cat << EOF > ${TMP_INSTALL_DIR}/post-install.sh
+echo "/usr/local/lib" > /etc/ld.so.conf.d/python2.7.conf && /sbin/ldconfig
+EOF
+
+# Remove our addition of ldconfig library path
+cat << EOF > ${TMP_INSTALL_DIR}/post-uninstall.sh
+/bin/rm /etc/ld.so.conf.d/python2.7.conf && /sbin/ldconfig
+EOF
 
 fpm -s dir -t rpm -n python27 -v 2.7.6 -C ${TMP_INSTALL_DIR} \
   --after-install ${TMP_INSTALL_DIR}/run-ldconfig.sh \
@@ -44,10 +52,3 @@ fpm -s dir -t rpm -n python27 -v 2.7.6 -C ${TMP_INSTALL_DIR} \
   --directories=/usr/local/lib/python2.7/ \
   --directories=/usr/local/include/python2.7/ \
   usr/local
-
-
-
-
-
-
-
