@@ -3,12 +3,13 @@
 
 DOWNLOAD_DIR=/tmp/fpm-python
 TMP_INSTALL_DIR=/tmp/fpm-python-installdir
+LATEST_PYTHON=https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
 
 mkdir ${DOWNLOAD_DIR} ; mkdir ${TMP_INSTALL_DIR}
 cd ${DOWNLOAD_DIR}
-curl -LO http://python.org/ftp/python/2.7.6/Python-2.7.6.tgz && \
-  tar xf Python-2.7.6.tgz && \
-  cd Python-2.7.6
+curl -LO ${LATEST_PYTHON} && \
+  tar xf Python*.tgz && \
+  cd Python*
 
 yum -y install \
   openssl-devel \
