@@ -21,7 +21,11 @@ yum -y install \
   db4-devel \
   expat-devel
 
-./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared --enable-ipv6 && make
+# Build with shared library enabled
+./configure --prefix=/usr/local --enable-shared --with-system-expat --with-system-ffi --enable-unicode=ucs4 && make
+
+# Build with static binary (Not recommended)
+# ./configure --prefix=/usr/local --with-system-expat --with-system-ffi --enable-unicode=ucs4 && make
 
 make install DESTDIR=${TMP_INSTALL_DIR}
 
