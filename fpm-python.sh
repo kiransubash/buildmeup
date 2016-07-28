@@ -40,7 +40,8 @@ cat << EOF > ${TMP_INSTALL_DIR}/post-uninstall.sh
 EOF
 
 fpm -s dir -t rpm -n python27 -v 2.7.6 -C ${TMP_INSTALL_DIR} \
-  --after-install ${TMP_INSTALL_DIR}/run-ldconfig.sh \
+  --after-install ${TMP_INSTALL_DIR}/post-install.sh \
+  --after-remove ${TMP_INSTALL_DIR}/post-uninstall.sh \
   -d 'openssl' \
   -d 'bzip2' \
   -d 'zlib' \
