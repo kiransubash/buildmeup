@@ -1,0 +1,167 @@
+#!/usr/bin/expect --
+set timeout 30
+set prompt "\>\ *$|#\ *$|\\$\ *$"
+proc Connect {host usr} {
+   set rval 0
+   set pw_chk 0
+   set max_checks 4
+   global spawn_id
+   global timeout
+   global prompt
+   
+   puts "Connecting to $host as user $usr"
+    
+   set host "$usr@$host"
+   set sshcmd "/usr/bin/ssh"
+    
+   set id [spawn $sshcmd $host]
+   if { $id <= 0 } {
+      puts "ERROR: Failed to connect to host\n"
+      set rval 1
+       
+   } else {
+      puts "Using Process ID: $id"
+   }
+    
+   expect {
+       
+      -nocase -re "word:" {
+         interact -o "\r" return
+         exp_continue
+         incr pw_chk;
+          
+         if { $pw_chk < $max_checks } {
+            exp_continue       
+         } else {
+            set rval 2
+            puts "ERROR: Login retry failed.  Invalid login password"
+         }  
+          
+      } -nocase -re "\(yes/no\)" {
+         send "yes\r"
+         exp_continue
+       
+      } -nocase -re "$prompt" {
+         puts "\nSUCCESS: Logged in and ready to send commands\n"
+      } timeout {
+         puts "ERROR: Connection timeout waiting for login prompt"
+         set rval 3
+       
+      } eof {
+         puts "ERROR: Connection to host failed: $expect_out(buffer)"
+         set rval 4
+      }
+   }
+   return $rval
+}
+proc Usage {} {
+   puts "Usage: runcmd.exp <options>"
+   puts "\n"
+   puts "REQUIRED ARGS:"
+   puts "   -h <hostname|ip>   = hostname or ip address"
+   puts "   -u <username>      = username to login with"
+   puts "   -f <filename>      = command file, defaults to STDIN"
+   puts "\n"
+   puts "OPTIONAL ARGS:"
+   puts "   -t <seconds>         = timeout in seconds"
+   puts "\n"
+}
+# main()
+   set rval 0
+   set hostname ""
+   set username ""
+   set cmdfile ""
+   for {set n 0} {$n < $argc} {incr n} {
+    
+      set arg [lindex $argv $n]
+       
+      if { [string compare $arg "-u"] == 0} {
+         if { $n < $n+1 } {
+            incr n
+            set username [lindex $argv $n]
+         } else {
+            set rval 1
+            puts "ERROR: Missing ARG for $arg\n"
+         }
+          
+      } elseif { [string compare $arg "-h"] == 0} {
+         if { $n < $n+1 } {
+            incr n
+            set hostname [lindex $argv $n]
+         } else {
+            set rval 1
+            puts "ERROR: Missing ARG for $arg\n"
+         }
+          
+      } elseif { [string compare $arg "-t"] == 0} {
+         if { $n < $n+1 } {
+            incr n
+            set timeout [lindex $argv $n]
+         } else {
+            set rval 1
+            puts "ERROR: Missing ARG for $arg\n"
+         }
+  
+      } elseif { [string compare $arg "-f"] == 0} {
+         if { $n < $n+1 } {
+            incr n
+            set cmdfile [lindex $argv $n]
+         } else {
+            set rval 1
+            puts "ERROR: Missing ARG for $arg\n"
+         }
+      }        
+   }
+         
+   if { [llength $hostname] > 0 && [llength $username] > 0
+        && [llength $cmdfile] > 0 } {
+      puts "hostname = $hostname, user = $username, cmdfile=$cmdfile"
+       
+   } else {
+      set rval 2
+      puts "ERROR: Missing required args, must have -h, -u -f\n"
+      Usage
+   }
+    
+   if { $rval <= 0 } {
+    
+      puts "Reading $cmdfile for commands, max 10000 lines"
+      if { [catch {set cmdfile_fd [open $cmdfile r]} err_msg] } {
+         puts stderr "Could not open $cmdfile for reading\n$err_msg"
+         exit 1
+      }
+          
+      set send_text [read $cmdfile_fd 10000]
+      close $cmdfile_fd     
+      if { [Connect "$hostname" "$username"] > 0 } {
+         exit 127
+      }
+       
+      foreach line [split $send_text \n] {
+         if { [llength $line] > 0 } {          
+            send "$line\r"
+             
+            expect {           
+               # Below handles the yes/no prompts 
+               -nocase -re "\(yes/no\)" {
+                  send "yes\r"
+                  exp_continue
+                
+               } -nocase -re "--more--" {
+                  send " "
+                  exp_continue
+                                           
+               # Below handles the normal prompt to detect when logged in
+               } -nocase -re "$prompt" {
+                  puts "\n--SUCCESS for normal login prompt--\n"
+               }
+            }
+                 
+         }
+      }
+       
+      # Now that we are done, send an exit
+      puts "*** Finished with script"
+      send "exit\r"
+      sleep 1
+   }
