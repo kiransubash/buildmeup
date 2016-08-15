@@ -47,6 +47,10 @@ Optional: vde ✘, sdl ✘, gtk+ ✘, libssh2 ✘
 	Install HEAD version
 ~~~~
 
+## Build a Kernel image
+
+TODO
+
 ## Get the Image file
 #### Raspbian
 Download from https://www.raspberrypi.org/downloads/raspbian/
