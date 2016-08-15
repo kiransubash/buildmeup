@@ -51,3 +51,7 @@ Optional: vde ✘, sdl ✘, gtk+ ✘, libssh2 ✘
 #### Raspbian
 Download from https://www.raspberrypi.org/downloads/raspbian/
 
+##### Minimal image 
+~~~~
+kiran-subash:~ kiran.subash$ curl -LO https://downloads.raspberrypi.org/raspbian_lite_latest
+~~~~
