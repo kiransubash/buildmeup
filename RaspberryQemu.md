@@ -47,3 +47,7 @@ Optional: vde ✘, sdl ✘, gtk+ ✘, libssh2 ✘
 	Install HEAD version
 ~~~~
 
+## Get the Image file
+#### Raspbian
+Download from https://www.raspberrypi.org/downloads/raspbian/
+
