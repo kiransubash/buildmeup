@@ -55,3 +55,15 @@ Download from https://www.raspberrypi.org/downloads/raspbian/
 ~~~~
 kiran-subash:~ kiran.subash$ curl -LO https://downloads.raspberrypi.org/raspbian_lite_latest
 ~~~~
+
+Unzip the archive to extract the ```img``` file. 
+
+~~~~
+kiran-subash:~ kiran.subash$ ls -lrth 2016-05-27-raspbian-jessie-lite.img
+-rw-r--r--  1 kiran.subash  1365734164   1.3G May 27 17:11 2016-05-27-raspbian-jessie-lite.img
+~~~~
+
+## Running QEMU
+~~~~
+qemu-system-arm.exe -M versatilepb -cpu arm1176 -m 256 -hda 2016-05-27-raspbian-jessie-lite.img -kernel  ~/Downloads/zImage_3.1.9 -append "root=/dev/sda2" -net nic -net user,hostfwd=tcp::2222-:22
+~~~~
