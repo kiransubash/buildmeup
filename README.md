@@ -12,3 +12,8 @@ Requires : fpm, "development tools" group
 Expect script to run a command on a remote server via Telnet/SSH. Unsure about the original source, but can be adapted to most situations as a template to start with. 
 
 Requires: expect
+
+#### crypt.pl
+Quick perl reference snippet to demonstrate AES encryption and decryption. Can be used to build quick fixes, or when streaming across an insecure environment. 
+
+Requires: Perl, Perl Modules listed in comments. 
