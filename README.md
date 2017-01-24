@@ -20,3 +20,6 @@ Requires: expect
 Quick perl reference snippet to demonstrate AES encryption and decryption. Can be used to build quick fixes, or when streaming across an insecure environment. 
 
 Requires: Perl, Perl Modules listed in comments. 
+
+#### dmesg.sh
+Tiny snippet to print dmesg output with real timestamps. Extremely useful especially on long lived machines. 
