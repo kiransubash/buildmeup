@@ -21,3 +21,8 @@ After succesful completion, reboot
 ```
 reboot
 ```
+
+Check modules
+```
+lsmod | grep -i vbox
+```
