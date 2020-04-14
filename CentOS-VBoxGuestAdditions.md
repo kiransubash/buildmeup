@@ -1,3 +1,9 @@
+Install EPEL release
+
+```
+yum install epel-release
+```
+
 Update kernel and Install required dependencies
 ```
 yum update kernel*
